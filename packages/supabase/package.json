@@ -1,0 +1,7 @@
+{
+  "name": "@revamp/supabase",
+  "private": true,
+  "devDependencies": {
+    "supabase": "^1.112.0"
+  }
+}
