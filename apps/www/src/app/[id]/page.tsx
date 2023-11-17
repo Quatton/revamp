@@ -14,7 +14,7 @@ import { startGenBiz } from "@/lib/server/completion/genbiz";
 import { Database } from "@/types/supabase";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 export default async function ResultView({
   params: { id },
