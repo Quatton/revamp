@@ -10,9 +10,7 @@ export default function Home() {
   return (
     <main className="container flex h-screen flex-col items-center justify-center">
       <h1 className="text-3xl font-bold text-primary">Revamp</h1>
-      <h2 className="text-xl text-accent">
-        When building business is just doing better than the existing one
-      </h2>
+      <h2 className="text-xl text-accent">Ideas are cheap. Steal them.</h2>
 
       <form
         action={async (formData: FormData) => {
