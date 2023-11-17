@@ -3,6 +3,8 @@ import { convertKeysFromSnakeToCamelCase } from "@/lib/utils";
 import { CohereStream } from "ai";
 import { StreamedChatResponse } from "cohere-ai/api";
 import { cookies } from "next/headers";
+import { getPrompt, streamToSupabase } from "./stream";
+import { revalidatePath } from "next/cache";
 
 const instruction = `CONTEXT:  
 You are Revamp, a world-class marketing and entrepreneurship expert known for revitalizing businesses. 
@@ -15,44 +17,16 @@ RESPONSE FORMAT:
 Return a table with 4 columns:
 | Company Name | Product | Pricing | Place | Promotion |
 |--------------|---------|---------|-------|-----------|
-| [Company's name] | [Value proposition: one concise statement describing the product] | [Pricing strategies, sales or discounts, popular pricing plan or tier] | [Sales funnel and distribution methods, demographics and regions served, global or local operation] | [Promotion channels, core brand message] |`;
+| [Company's name] | Product: [Value proposition: one concise statement describing the product] | Price: [Pricing strategies, sales or discounts, popular pricing plan or tier] | Place: [Sales funnel and distribution methods, demographics and regions served, global or local operation] | Promotion: [Promotion channels, core brand message] |`;
 
 export async function startFourP({ id }: { id: string }) {
   const supabase = createServerClient(cookies());
-
-  const supabaseUpdate = async (
-    completion: string,
-    ev: StreamedChatResponse["eventType"],
-  ) => {
-    return await supabase.rpc("stream-completion", {
-      completion,
-      input_id: id,
-      table_name: "fourp",
-      event_type: ev,
-    });
-  };
-
-  const { data, error } = await supabase
-    .from("input")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  const { target_audience, expertise, product_idea } = data;
-
-  const prompt = `USER PROFILE:
-Target Audience: ${target_audience}
-Product Idea: ${product_idea}
-Expertise: ${expertise}`;
+  const prompt = await getPrompt(supabase, id);
 
   const body = JSON.stringify({
     message: `${instruction}\n\n${prompt}`,
     model: "command",
-    temperature: 0.5,
+    temperature: 0.7,
     connectors: [{ id: "web-search" }],
     citation_quality: "accurate",
     stream: true,
@@ -71,112 +45,7 @@ Expertise: ${expertise}`;
     throw new Error(await response.text());
   }
 
-  const decoder = new TextDecoder();
-  const stream = new ReadableStream({
-    start(controller) {
-      const reader = response.body?.getReader();
-
-      function push() {
-        if (!reader) {
-          controller.close();
-          return;
-        }
-
-        reader.read().then(({ done, value }) => {
-          if (done) {
-            controller.close();
-            return;
-          }
-
-          controller.enqueue(value);
-          push();
-        });
-      }
-
-      push();
-    },
-    cancel() {
-      reader.releaseLock();
-    },
-  });
-
-  let completion = "";
-  const reader = stream.getReader();
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) {
-      break;
-    }
-
-    const text = decoder.decode(value, {
-      stream: true,
-    });
-
-    const json = (() => {
-      try {
-        return convertKeysFromSnakeToCamelCase(
-          JSON.parse(text),
-        ) as StreamedChatResponse;
-      } catch (e) {
-        return null;
-      }
-    })();
-
-    if (!json) {
-      continue;
-    }
-
-    const { eventType } = json;
-    let shouldReturn = false;
-
-    switch (eventType) {
-      case "stream-start":
-        await supabase
-          .from("fourp")
-          .upsert(
-            {
-              input_id: id,
-              completion: "",
-              event_type: "stream-start",
-            },
-            {
-              onConflict: "input_id",
-            },
-          )
-          .eq("input_id", id);
-        break;
-      case "text-generation":
-        const { text } = json;
-        if (!text) break;
-        completion += text;
-        void supabase
-          .from("fourp")
-          .update({
-            completion,
-            event_type: "text-generation",
-          })
-          .eq("input_id", id)
-          .then(() => {});
-        break;
-      case "citation-generation":
-        shouldReturn = true;
-
-        break;
-      default:
-        continue;
-    }
-
-    if (shouldReturn) {
-      reader.releaseLock();
-      break;
-    }
-  }
-  await supabase
-    .from("fourp")
-    .update({
-      completion,
-      event_type: "stream-end",
-    })
-    .eq("input_id", id);
+  await streamToSupabase(supabase, response, id, "fourp");
+  revalidatePath(`/${id}`);
   return;
 }

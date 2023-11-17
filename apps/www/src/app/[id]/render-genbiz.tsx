@@ -1,16 +1,16 @@
 "use client";
 
-import { FourPData } from "@/lib/state";
+import { NewBizData } from "@/lib/state";
 import { createBrowseClient } from "@/lib/supabase/browser";
-import { eventTypeToText, step_1_splitFourPs } from "@/lib/text";
+import { eventTypeToText, step_3_splitIdeas } from "@/lib/text";
 import { getSupabaseSubscriber } from "@/lib/utils";
 import { Database } from "@/types/supabase";
 import { StreamedChatResponse } from "cohere-ai/api";
 import { useEffect, useState } from "react";
 
-type FourPTableData = Database["public"]["Tables"]["fourp"]["Row"];
+type GenBizTableData = Database["public"]["Tables"]["genbiz"]["Row"];
 
-export function FourPTable({
+export function GenBizTable({
   id,
   initialData,
 }: {
@@ -18,31 +18,31 @@ export function FourPTable({
   initialData: string;
 }) {
   const supabase = createBrowseClient();
-  const [s1Data, setS1Data] = useState<FourPData[]>(() =>
-    step_1_splitFourPs(initialData),
+  const [s3Data, setS3Data] = useState<NewBizData[]>(() =>
+    step_3_splitIdeas(initialData),
   );
   const [eventType, setEventType] = useState<
     StreamedChatResponse["eventType"] | null
   >(null);
 
   useEffect(() => {
-    const channel = getSupabaseSubscriber(supabase, "fourp", id, (data) => {
+    const channel = getSupabaseSubscriber(supabase, "genbiz", id, (data) => {
       if (!data) {
         setEventType(null);
-        setS1Data([]);
+        setS3Data([]);
         return;
       }
       setEventType(data.event_type);
       if (!data.completion) return;
-      const table = step_1_splitFourPs(data.completion);
-      setS1Data(table);
+      const table = step_3_splitIdeas(data.completion);
+      setS3Data(table);
       return;
     });
 
     () => {
       channel.unsubscribe();
     };
-  }, [id, s1Data, setS1Data, supabase]);
+  }, [id, s3Data, setS3Data, supabase]);
 
   return (
     <div className="space-y-2">
@@ -50,21 +50,19 @@ export function FourPTable({
       <table className="table">
         <thead>
           <tr>
-            <th>Name</th>
             <th>Product</th>
-            <th>Price</th>
-            <th>Place</th>
-            <th>Promotion</th>
+            <th>Type of Product</th>
+            <th>Reference</th>
+            <th>Improvements</th>
           </tr>
         </thead>
         <tbody>
-          {s1Data.map((row, i) => (
-            <tr key={i}>
-              <td>{row.name}</td>
-              <td>{row.product}</td>
-              <td>{row.price}</td>
-              <td>{row.place}</td>
-              <td>{row.promotion}</td>
+          {s3Data.map((data) => (
+            <tr key={data.product}>
+              <td>{data.product}</td>
+              <td>{data.type}</td>
+              <td>{data.advantages}</td>
+              <td>{data.improvements}</td>
             </tr>
           ))}
         </tbody>

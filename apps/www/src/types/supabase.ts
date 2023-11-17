@@ -14,21 +14,18 @@ export interface Database {
           completion: string | null
           created_at: string
           event_type: Database["public"]["Enums"]["cohere-event-type"]
-          id: string
           input_id: string
         }
         Insert: {
           completion?: string | null
           created_at?: string
           event_type?: Database["public"]["Enums"]["cohere-event-type"]
-          id?: string
           input_id: string
         }
         Update: {
           completion?: string | null
           created_at?: string
           event_type?: Database["public"]["Enums"]["cohere-event-type"]
-          id?: string
           input_id?: string
         }
         Relationships: [
@@ -38,6 +35,35 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "input"
             referencedColumns: ["id"]
+          }
+        ]
+      }
+      genbiz: {
+        Row: {
+          completion: string | null
+          created_at: string
+          event_type: Database["public"]["Enums"]["cohere-event-type"]
+          input_id: string
+        }
+        Insert: {
+          completion?: string | null
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["cohere-event-type"]
+          input_id: string
+        }
+        Update: {
+          completion?: string | null
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["cohere-event-type"]
+          input_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "genbiz_input_id_fkey"
+            columns: ["input_id"]
+            isOneToOne: true
+            referencedRelation: "swot"
+            referencedColumns: ["input_id"]
           }
         ]
       }
@@ -68,6 +94,35 @@ export interface Database {
         }
         Relationships: []
       }
+      swot: {
+        Row: {
+          completion: string | null
+          created_at: string
+          event_type: Database["public"]["Enums"]["cohere-event-type"]
+          input_id: string
+        }
+        Insert: {
+          completion?: string | null
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["cohere-event-type"]
+          input_id: string
+        }
+        Update: {
+          completion?: string | null
+          created_at?: string
+          event_type?: Database["public"]["Enums"]["cohere-event-type"]
+          input_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "swot_input_id_fkey"
+            columns: ["input_id"]
+            isOneToOne: true
+            referencedRelation: "fourp"
+            referencedColumns: ["input_id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -79,6 +134,7 @@ export interface Database {
           input_id: string
           event_type: string
           completion: string
+          created_at: string
         }
         Returns: string
       }

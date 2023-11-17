@@ -6,16 +6,14 @@ export function grabTable(text: string) {
 }
 
 export function splitTable(text: string) {
+  // console.log(text);
   const table = grabTable(text);
   return (
     table
       ?.split("\n")
       // .map((line) => line.replaceAll("<br>", "\n"))
       .slice(2)
-      .filter(
-        (line) =>
-          line.includes("|") && !line.includes("N/A") && !line.includes("---"),
-      ) ?? []
+      .filter((line) => line.includes("|") && !line.includes("---")) ?? []
   );
 }
 
@@ -69,7 +67,6 @@ export function step_1_splitFourPs(text: string) {
         .split("|")
         .map((text) => text.trim())
         .filter((text) => text !== "");
-      console.log(line, line.split("|"));
       return {
         name: res[0],
         product: res[1],

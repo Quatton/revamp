@@ -1,16 +1,16 @@
 "use client";
 
-import { FourPData } from "@/lib/state";
+import { SWOTData } from "@/lib/state";
 import { createBrowseClient } from "@/lib/supabase/browser";
-import { eventTypeToText, step_1_splitFourPs } from "@/lib/text";
+import { eventTypeToText, step_2_splitSWOT } from "@/lib/text";
 import { getSupabaseSubscriber } from "@/lib/utils";
 import { Database } from "@/types/supabase";
 import { StreamedChatResponse } from "cohere-ai/api";
 import { useEffect, useState } from "react";
 
-type FourPTableData = Database["public"]["Tables"]["fourp"]["Row"];
+type SwotTableData = Database["public"]["Tables"]["swot"]["Row"];
 
-export function FourPTable({
+export function SwotTable({
   id,
   initialData,
 }: {
@@ -18,31 +18,31 @@ export function FourPTable({
   initialData: string;
 }) {
   const supabase = createBrowseClient();
-  const [s1Data, setS1Data] = useState<FourPData[]>(() =>
-    step_1_splitFourPs(initialData),
+  const [s2Data, setS2Data] = useState<SWOTData[]>(() =>
+    step_2_splitSWOT(initialData),
   );
   const [eventType, setEventType] = useState<
     StreamedChatResponse["eventType"] | null
   >(null);
 
   useEffect(() => {
-    const channel = getSupabaseSubscriber(supabase, "fourp", id, (data) => {
+    const channel = getSupabaseSubscriber(supabase, "swot", id, (data) => {
       if (!data) {
         setEventType(null);
-        setS1Data([]);
+        setS2Data([]);
         return;
       }
       setEventType(data.event_type);
       if (!data.completion) return;
-      const table = step_1_splitFourPs(data.completion);
-      setS1Data(table);
+      const table = step_2_splitSWOT(data.completion);
+      setS2Data(table);
       return;
     });
 
     () => {
       channel.unsubscribe();
     };
-  }, [id, s1Data, setS1Data, supabase]);
+  }, [id, s2Data, setS2Data, supabase]);
 
   return (
     <div className="space-y-2">
@@ -51,20 +51,20 @@ export function FourPTable({
         <thead>
           <tr>
             <th>Name</th>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Place</th>
-            <th>Promotion</th>
+            <th>Strengths</th>
+            <th>Weaknesses</th>
+            <th>Opportunities</th>
+            <th>Threats</th>
           </tr>
         </thead>
         <tbody>
-          {s1Data.map((row, i) => (
+          {s2Data.map((row, i) => (
             <tr key={i}>
               <td>{row.name}</td>
-              <td>{row.product}</td>
-              <td>{row.price}</td>
-              <td>{row.place}</td>
-              <td>{row.promotion}</td>
+              <td>{row.strengths}</td>
+              <td>{row.weaknesses}</td>
+              <td>{row.opportunities}</td>
+              <td>{row.threats}</td>
             </tr>
           ))}
         </tbody>
