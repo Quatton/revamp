@@ -143,7 +143,7 @@ export default async function ResultView({
             <ChatBox>
               <p>
                 {
-                  "Now we can analyze their strengths and weaknesses! (Let's see if we can do better)"
+                  "Finally, let's generate some business ideas based on the analysis!"
                 }
               </p>
               <form
