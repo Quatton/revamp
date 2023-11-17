@@ -5,5 +5,8 @@
   "workspaces": [
     "packages/*",
     "apps/*"
-  ]
+  ],
+  "devDependencies": {
+    "@swc-jotai/react-refresh": "^0.1.0"
+  }
 }
