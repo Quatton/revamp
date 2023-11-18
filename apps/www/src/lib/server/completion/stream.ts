@@ -11,7 +11,6 @@ export async function streamToSupabase(
   table: keyof Omit<Database["public"]["Tables"], "input">,
 ) {
   await supabase.from(table).delete().eq("input_id", id);
-  console.log("yeee");
   const decoder = new TextDecoder();
   const stream = new ReadableStream({
     start(controller) {
@@ -114,11 +113,11 @@ export async function streamToSupabase(
           });
 
         break;
-      case "stream-end":
+      case "citation-generation":
         shouldReturn = true;
-        if ("text" in json) {
-          completion = json.text as string;
-        }
+        // if ("text" in json) {
+        //   completion = json.text as string;
+        // }
         break;
       default:
         continue;
