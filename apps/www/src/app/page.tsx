@@ -45,7 +45,7 @@ export default function Home() {
         <div className="flex w-full flex-col">
           <label className="label">Target Audience</label>
           <input
-            className="input input-bordered input-lg"
+            className="input input-bordered input-lg placeholder-neutral-600"
             name="targetAudience"
             placeholder="Student K-12 who are struggling with math"
             required
@@ -55,7 +55,7 @@ export default function Home() {
         <div className="flex flex-col gap-1">
           <label className="label">Product Idea</label>
           <input
-            className="input input-bordered input-lg"
+            className="input input-bordered input-lg placeholder-neutral-600"
             name="productIdea"
             placeholder="A math learning app that uses AI to help students learn math"
           />
@@ -64,7 +64,7 @@ export default function Home() {
         <div className="flex flex-col gap-1">
           <label className="label">Expertise & Interest</label>
           <input
-            className="input input-bordered input-lg"
+            className="input input-bordered input-lg placeholder-neutral-600"
             name="expertise"
             placeholder="Web development, AI, Math"
           />

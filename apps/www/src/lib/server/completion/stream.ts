@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase/server";
+import { renderPrompt } from "@/lib/text";
 import { convertKeysFromSnakeToCamelCase } from "@/lib/utils";
 import { Database } from "@/types/supabase";
 import { StreamedChatResponse } from "cohere-ai/api";
@@ -9,6 +10,8 @@ export async function streamToSupabase(
   id: string,
   table: keyof Omit<Database["public"]["Tables"], "input">,
 ) {
+  await supabase.from(table).delete().eq("input_id", id);
+
   const decoder = new TextDecoder();
   const stream = new ReadableStream({
     start(controller) {
@@ -27,6 +30,7 @@ export async function streamToSupabase(
           }
 
           controller.enqueue(value);
+
           push();
         });
       }
@@ -39,6 +43,7 @@ export async function streamToSupabase(
   });
 
   let completion = "";
+  let previous = "";
   const reader = stream.getReader();
   while (true) {
     const { value, done } = await reader.read();
@@ -46,16 +51,34 @@ export async function streamToSupabase(
       break;
     }
 
-    const text = decoder.decode(value, {
-      stream: true,
-    });
+    const text = previous + decoder.decode(value, { stream: true });
+    console.log("___________________");
+    console.count("exp3");
+    console.log(text);
 
     const json = (() => {
       try {
-        return convertKeysFromSnakeToCamelCase(
+        const json = convertKeysFromSnakeToCamelCase(
           JSON.parse(text),
         ) as StreamedChatResponse;
-      } catch (e) {
+        previous = "";
+        return json;
+      } catch (error) {
+        const regex = /Unexpected token \{ in JSON at position (\d+)/;
+        // we will just remove what's errored
+        const e = error as Error;
+        const match = e.message.match(regex);
+        console.log(e.message, match);
+        if (match) {
+          const removed = text.slice(0, Number(match[1]));
+          const parsed = convertKeysFromSnakeToCamelCase(
+            JSON.parse(removed),
+          ) as StreamedChatResponse;
+          previous = "";
+          return parsed;
+        }
+
+        previous = text;
         return null;
       }
     })();
@@ -69,19 +92,11 @@ export async function streamToSupabase(
 
     switch (eventType) {
       case "stream-start":
-        await supabase
-          .from(table)
-          .upsert(
-            {
-              input_id: id,
-              completion: "",
-              event_type: "stream-start",
-            },
-            {
-              onConflict: "input_id",
-            },
-          )
-          .eq("input_id", id);
+        await supabase.from(table).insert({
+          input_id: id,
+          completion: "",
+          event_type: "stream-start",
+        });
         break;
       case "text-generation":
         const { text } = json;
@@ -95,13 +110,16 @@ export async function streamToSupabase(
             input_id: id,
             table_name: table,
           })
-          .then(({ error }) => {
-            if (error) console.log(error);
+          .then(({ data }) => {
+            // if (completion !== data) console.log("what?");
           });
+
         break;
       case "stream-end":
         shouldReturn = true;
-
+        if ("text" in json) {
+          completion = json.text as string;
+        }
         break;
       default:
         continue;
@@ -118,7 +136,7 @@ export async function streamToSupabase(
     .update({
       completion,
       event_type: "stream-end",
-      created_at: new Date().toISOString(),
+      // created_at: new Date().toISOString(),
     })
     .eq("input_id", id);
 }
@@ -137,14 +155,5 @@ export async function getPrompt(
     throw error;
   }
 
-  const { target_audience, expertise, product_idea } = data;
-
-  const prompt = `USER PROFILE:
-Target Audience: ${target_audience}
-Product Idea: ${product_idea}
-Expertise: ${expertise}`;
-
-  console.log(prompt);
-
-  return prompt;
+  return renderPrompt(data);
 }

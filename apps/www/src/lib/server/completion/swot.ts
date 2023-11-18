@@ -20,12 +20,13 @@ Return a table with 5 columns:
 export async function startSWOT({
   id,
   completion,
+  prompt,
 }: {
   id: string;
   completion: string;
+  prompt: string;
 }) {
   const supabase = createServerClient(cookies());
-  const prompt = await getPrompt(supabase, id);
 
   const data = step_1_splitFourPs(completion);
 

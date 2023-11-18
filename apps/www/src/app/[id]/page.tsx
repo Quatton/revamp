@@ -1,18 +1,16 @@
-import { SubmitButton } from "@/components/utils/submit-button";
-import { startFourP } from "@/lib/server/completion/fourp";
 import { createServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import { ClassValue } from "clsx";
 import { Bot, Plus } from "lucide-react";
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
 import { FourPTable } from "./render-fourp";
-import { startSWOT } from "@/lib/server/completion/swot";
 import { SwotTable } from "./render-swot";
 import { GenBizTable } from "./render-genbiz";
-import { startGenBiz } from "@/lib/server/completion/genbiz";
-import { Database } from "@/types/supabase";
 import Link from "next/link";
+import { FormFetch } from "@/components/utils/form-fetch";
+import { unstable_cache } from "next/cache";
+import { ChatBox } from "./chat-box";
+import { OneListener } from "./one-listener";
 
 export const runtime = "edge";
 
@@ -28,27 +26,12 @@ export default async function ResultView({
 
   const [{ data: input }, { data: fourp }, { data: swot }, { data: genbiz }] =
     await Promise.all([
-      supabase.from("input").select("*").eq("id", id).single(),
-      supabase
-        .from("fourp")
-        .select("*")
-        .eq("input_id", id)
-        .eq("event_type", "stream-end")
-        .single(),
-      supabase
-        .from("swot")
-        .select("*")
-        .eq("input_id", id)
-        .eq("event_type", "stream-end")
-        .single(),
-      supabase
-        .from("genbiz")
-        .select("*")
-        .eq("input_id", id)
-        .eq("event_type", "stream-end")
-        .single(),
+      getInput(supabase, id),
+      getFourp(supabase, id),
+      getSwot(supabase, id),
+      getGenbiz(supabase, id),
     ] as const);
-
+  console.log("refreshed");
   if (!input) {
     return (
       <main className="grid h-screen place-content-center text-center">
@@ -94,102 +77,106 @@ export default async function ResultView({
           </Link>
         </div>
       </div>
-      <div className="col-span-2 overflow-y-auto">
-        <ChatBox>
-          <p>{"First let's start with researching the existing businesses"}</p>
-          <form
-            action={async () => {
-              "use server";
-              await startFourP({ id });
-            }}
-          >
-            <SubmitButton>
-              {fourp?.completion ? "Restart" : "Start"}
-            </SubmitButton>
-          </form>
-        </ChatBox>
-        <ChatBox>
-          <FourPTable id={id} initialData={fourp?.completion ?? ""} />
-        </ChatBox>
-        {fourp?.event_type === "stream-end" && (
-          <>
-            <ChatBox>
-              <p>
-                {
-                  "Now we can analyze their strengths and weaknesses! (Let's see if we can do better)"
-                }
-              </p>
-              <form
-                action={async () => {
-                  "use server";
-                  await startSWOT({
-                    id,
-                    completion: fourp?.completion!,
-                  });
-                }}
-              >
-                <SubmitButton>
-                  {swot?.completion ? "Restart" : "Start"}
-                </SubmitButton>
-              </form>
-            </ChatBox>
-            <ChatBox>
-              <SwotTable id={id} initialData={swot?.completion ?? ""} />
-            </ChatBox>
-          </>
-        )}
-        {swot?.event_type === "stream-end" && (
-          <>
-            <ChatBox>
-              <p>
-                {
-                  "Finally, let's generate some business ideas based on the analysis!"
-                }
-              </p>
-              <form
-                action={async () => {
-                  "use server";
-                  await startGenBiz({
-                    id,
-                    completion: swot?.completion!,
-                  });
-                }}
-              >
-                <SubmitButton>
-                  {genbiz?.completion ? "Restart" : "Start"}
-                </SubmitButton>
-              </form>
-            </ChatBox>
-            <ChatBox>
-              <GenBizTable id={id} initialData={genbiz?.completion ?? ""} />
-            </ChatBox>
-          </>
-        )}
-      </div>
+      <OneListener
+        id={id}
+        input={input}
+        initialFourP={fourp?.completion ?? ""}
+        initialSwot={swot?.completion ?? ""}
+        initialGenBiz={genbiz?.completion ?? ""}
+      />
     </main>
   );
 }
 
-function ChatBox({
-  className,
-  children,
-}: {
-  className?: ClassValue;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className="grid grid-cols-10 gap-2 p-4 odd:bg-base-200 even:bg-base-300"
-      style={{
-        placeItems: "center start",
-      }}
-    >
-      <span className="p-2">
-        <Bot className="h-6 w-6" />
-      </span>
-      <div className={cn(className, "col-span-9 flex flex-col gap-2")}>
-        {children}
-      </div>
-    </div>
-  );
+async function getInput(
+  supabase: ReturnType<typeof createServerClient>,
+  id: string,
+) {
+  return await unstable_cache(
+    async () => await supabase.from("input").select("*").eq("id", id).single(),
+    [id, `${id}-input`],
+    {
+      revalidate: 1000,
+      tags: [`${id}-input`],
+    },
+  )();
 }
+
+async function getFourp(
+  supabase: ReturnType<typeof createServerClient>,
+  id: string,
+) {
+  return await unstable_cache(
+    async () =>
+      await supabase
+        .from("fourp")
+        .select("*")
+        .eq("input_id", id)
+        .eq("event_type", "stream-end")
+        .single(),
+    [id, `${id}-fourp`],
+    {
+      revalidate: 1000,
+      tags: [`${id}-fourp`],
+    },
+  )();
+}
+
+async function getSwot(
+  supabase: ReturnType<typeof createServerClient>,
+  id: string,
+) {
+  return await unstable_cache(
+    async () =>
+      await supabase
+        .from("swot")
+        .select("*")
+        .eq("input_id", id)
+        .eq("event_type", "stream-end")
+        .single(),
+    [id, `${id}-swot`],
+    {
+      revalidate: 1000,
+      tags: [`${id}-swot`],
+    },
+  )();
+}
+
+async function getGenbiz(
+  supabase: ReturnType<typeof createServerClient>,
+  id: string,
+) {
+  return await unstable_cache(
+    async () =>
+      await supabase
+        .from("genbiz")
+        .select("*")
+        .eq("input_id", id)
+        .eq("event_type", "stream-end")
+        .single(),
+    [id, `${id}-genbiz`],
+    {
+      revalidate: 1000,
+      tags: [`${id}-genbiz`],
+    },
+  )();
+}
+
+// supabase
+//         .from("fourp")
+//         .select("*")
+//         .eq("input_id", id)
+//         .eq("event_type", "stream-end")
+//         .single(),
+//       supabase
+//         .from("swot")
+//         .select("*")
+//         .eq("input_id", id)
+//         .eq("event_type", "stream-end")
+//         .single(),
+//       supabase
+//         .from("genbiz")
+//         .select("*")
+//         .eq("input_id", id)
+//         .eq("event_type", "stream-end")
+//         .single(),

@@ -36,6 +36,18 @@ export function getSupabaseSubscriber(
     .on(
       "postgres_changes",
       {
+        event: "INSERT",
+        schema: "public",
+        table,
+        filter: `input_id=eq.${id}`,
+      },
+      (payload) => {
+        callback(payload.new as any);
+      },
+    )
+    .on(
+      "postgres_changes",
+      {
         event: "UPDATE",
         schema: "public",
         table,

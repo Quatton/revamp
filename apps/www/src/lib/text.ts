@@ -1,5 +1,6 @@
 import { StreamedChatResponse } from "cohere-ai/api";
 import { FourPData, InputData, NewBizData, SWOTData } from "./state";
+import { Database } from "@/types/supabase";
 
 export function grabTable(text: string) {
   return text.match(/\|.+\|?/gs)?.at(0);
@@ -91,4 +92,17 @@ export function eventTypeToText(eventType: StreamedChatResponse["eventType"]) {
     case "stream-end":
       return "Completed!";
   }
+}
+
+export function renderPrompt(
+  input: NonNullable<Database["public"]["Tables"]["input"]["Row"]>,
+) {
+  const { target_audience, expertise, product_idea } = input;
+
+  const prompt = `USER PROFILE:
+Target Audience: ${target_audience}
+Product Idea: ${product_idea}
+Expertise: ${expertise}`;
+
+  return prompt;
 }
