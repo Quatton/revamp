@@ -11,7 +11,7 @@ export function ChatBox({
 }) {
   return (
     <div
-      className="grid grid-cols-10 gap-2 p-4 odd:bg-base-200 even:bg-base-300"
+      className="grid max-w-full grid-cols-10 gap-2 p-4 odd:bg-base-200 even:bg-base-300"
       style={{
         placeItems: "center start",
       }}
@@ -19,7 +19,12 @@ export function ChatBox({
       <span className="p-2">
         <Bot className="h-6 w-6" />
       </span>
-      <div className={cn(className, "col-span-9 flex flex-col gap-2")}>
+      <div
+        className={cn(
+          className,
+          "col-span-9 flex flex-col gap-2 overflow-x-auto",
+        )}
+      >
         {children}
       </div>
     </div>

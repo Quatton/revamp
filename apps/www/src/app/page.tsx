@@ -40,7 +40,7 @@ export default function Home() {
 
           redirect(`/${data.id}`);
         }}
-        className="form-control mt-8 w-full max-w-xl gap-2"
+        className="form-control mt-8 w-full max-w-xl gap-4"
       >
         <div className="flex w-full flex-col">
           <label className="label">Target Audience</label>
@@ -70,9 +70,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="flex justify-end">
-          <SubmitButton>Generate</SubmitButton>
-        </div>
+        <SubmitButton>Generate</SubmitButton>
       </form>
     </main>
   );

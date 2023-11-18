@@ -90,14 +90,14 @@ export function OneListener({
   }, [id, s3Data, setS3Data, supabase]);
 
   return (
-    <div className="col-span-2 overflow-y-auto">
+    <div className="row-span-2 overflow-auto md:col-span-2 md:row-span-1">
       <FourPTable
         id={id}
         input={input}
         current={s1Data}
         eventType={s1EventType}
       />
-      {s1EventType === "stream-end" && (
+      {(s1EventType === "stream-end" || s2Data) && (
         <SwotTable
           id={id}
           input={input}
@@ -106,7 +106,7 @@ export function OneListener({
           eventType={s2EventType}
         />
       )}
-      {s2EventType === "stream-end" && (
+      {(s2EventType === "stream-end" || s3Data) && (
         <GenBizTable
           id={id}
           input={input}

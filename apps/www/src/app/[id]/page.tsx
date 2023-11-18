@@ -35,7 +35,7 @@ export default async function ResultView({
   if (!input) {
     return (
       <main className="grid h-screen place-content-center text-center">
-        <div className="text-lg">Whoopsie</div>
+        <div className="text-xs md:text-lg">Whoopsie</div>
         <div className="text-sm">
           If it should show something, please refresh the page.
         </div>
@@ -44,13 +44,13 @@ export default async function ResultView({
   }
 
   return (
-    <main className="grid h-screen w-full grid-cols-3">
-      <div className="flex flex-col justify-center gap-4 bg-base-200 p-8">
+    <main className="grid h-screen w-full grid-rows-3 md:grid-cols-3 md:grid-rows-1">
+      <div className="flex flex-col justify-center gap-2 bg-base-100 p-8 md:gap-4">
         <div>
           <label className="label">
             <span className="label-text">Target Audience</span>
           </label>
-          <p className="rounded-md border border-primary px-3 py-1 text-lg">
+          <p className="rounded-md border border-primary px-3 py-1 text-xs md:text-lg">
             {input.target_audience}
           </p>
         </div>
@@ -58,7 +58,7 @@ export default async function ResultView({
           <label className="label">
             <span className="label-text">Product Idea</span>
           </label>
-          <p className="rounded-md border border-secondary px-3 py-1 text-lg">
+          <p className="rounded-md border border-secondary px-3 py-1 text-xs md:text-lg">
             {input.product_idea}
           </p>
         </div>
@@ -66,12 +66,12 @@ export default async function ResultView({
           <label className="label">
             <span className="label-text">Expertise</span>
           </label>
-          <p className="rounded-md border border-accent px-3 py-1 text-lg">
+          <p className="rounded-md border border-accent px-3 py-1 text-xs md:text-lg">
             {input.expertise}
           </p>
         </div>
         <div className="text-center">
-          <Link href={`/`} className="btn btn-primary">
+          <Link href={`/`} className="btn btn-primary btn-sm md:btn-md">
             <Plus className="mr-2 h-6 w-6" />
             New Idea
           </Link>
