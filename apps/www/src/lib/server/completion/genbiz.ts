@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { getPrompt, streamToSupabase } from "./stream";
+import { streamToSupabase } from "./stream";
 import { step_2_splitSWOT } from "@/lib/text";
 import { revalidatePath } from "next/cache";
 
