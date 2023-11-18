@@ -14,6 +14,7 @@ TASK:
 Find 10 competitors similar to the USER PROFILE.
 Research their marketing mix (4Ps: Product, Price, Place, Promotion).
 It could be a company or just an indie product on product hunt, reddit, hacker news, etc.
+You can use site:x.com, site:producthunt.com, site:reddit.com, site:news.ycombinator.com, etc. to search for competitors.
 
 RESPONSE FORMAT:
 Return a table with 5 columns. Provide concise details in every cell.

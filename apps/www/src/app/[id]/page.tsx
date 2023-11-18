@@ -106,60 +106,63 @@ async function getFourp(
   supabase: ReturnType<typeof createServerClient>,
   id: string,
 ) {
-  return await unstable_cache(
-    async () =>
-      await supabase
-        .from("fourp")
-        .select("*")
-        .eq("input_id", id)
-        .eq("event_type", "stream-end")
-        .single(),
-    [id, `${id}-fourp`],
-    {
-      revalidate: 1000,
-      tags: [`${id}-fourp`],
-    },
-  )();
+  // return await unstable_cache(
+  //   async () => {
+  return await supabase
+    .from("fourp")
+    .select("*")
+    .eq("input_id", id)
+    .eq("event_type", "stream-end")
+    .single();
+  //   },
+  //   [id, `${id}-fourp`],
+  //   {
+  //     revalidate: 1000,
+  //     tags: [`${id}-fourp`],
+  //   },
+  // )();
 }
 
 async function getSwot(
   supabase: ReturnType<typeof createServerClient>,
   id: string,
 ) {
-  return await unstable_cache(
-    async () =>
-      await supabase
-        .from("swot")
-        .select("*")
-        .eq("input_id", id)
-        .eq("event_type", "stream-end")
-        .single(),
-    [id, `${id}-swot`],
-    {
-      revalidate: 1000,
-      tags: [`${id}-swot`],
-    },
-  )();
+  // return await unstable_cache(
+  //   async () => {
+  return await supabase
+    .from("swot")
+    .select("*")
+    .eq("input_id", id)
+    .eq("event_type", "stream-end")
+    .single();
+  //   },
+  //   [id, `${id}-swot`],
+  //   {
+  //     revalidate: 1000,
+  //     tags: [`${id}-swot`],
+  //   },
+  // )();
 }
 
 async function getGenbiz(
   supabase: ReturnType<typeof createServerClient>,
   id: string,
 ) {
-  return await unstable_cache(
-    async () =>
-      await supabase
-        .from("genbiz")
-        .select("*")
-        .eq("input_id", id)
-        .eq("event_type", "stream-end")
-        .single(),
-    [id, `${id}-genbiz`],
-    {
-      revalidate: 1000,
-      tags: [`${id}-genbiz`],
-    },
-  )();
+  // return await unstable_cache(
+  //   async () => {
+  return await supabase
+    .from("genbiz")
+    .select("*")
+    .eq("input_id", id)
+    .eq("event_type", "stream-end")
+    .single();
+  //   },
+  //   [id, `${id}-genbiz`],
+  //   {
+  //     revalidate: 1000,
+  //     tags: [`${id}-genbiz`],
+  //   },
+  // )();
 }
 
 // supabase

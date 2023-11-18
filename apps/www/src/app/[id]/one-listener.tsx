@@ -97,7 +97,7 @@ export function OneListener({
         current={s1Data}
         eventType={s1EventType}
       />
-      {(s1EventType === "stream-end" || s2Data) && (
+      {(initialFourP || s1Data) && (
         <SwotTable
           id={id}
           input={input}
@@ -106,7 +106,7 @@ export function OneListener({
           eventType={s2EventType}
         />
       )}
-      {(s2EventType === "stream-end" || s3Data) && (
+      {(initialSwot || s2Data) && (
         <GenBizTable
           id={id}
           input={input}

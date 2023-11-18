@@ -68,7 +68,6 @@ export async function streamToSupabase(
         // we will just remove what's errored
         const e = error as Error;
         const match = e.message.match(regex);
-        // console.log(e.message, match);
         if (match) {
           const removed = text.slice(0, Number(match[1]));
           const parsed = convertKeysFromSnakeToCamelCase(

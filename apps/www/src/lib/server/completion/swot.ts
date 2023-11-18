@@ -12,7 +12,7 @@ TASK:
 Analyze the provided 4 P's marketing documents to conduct a SWOT analysis for each competitor, focusing on their market positioning and potential for growth.
 
 RESPONSE FORMAT:
-Return a table with 5 columns:
+Return a table with 5 columns. Provide concise details in every cell.
 | Company Name | Strengths | Weaknesses | Opportunities | Threats |
 |--------------|-----------|------------|---------------|---------|
 | [Company's name] | [Main problems the product solves effectively] | [Areas where the company underperforms] | [Strategies for growth and overcoming weaknesses] | [Potential external risks to the company] |`;
