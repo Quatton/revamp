@@ -90,7 +90,7 @@ export function eventTypeToText(eventType: StreamedChatResponse["eventType"]) {
     case "text-generation":
       return "Generating text...";
     case "stream-end":
-      return "Completed!";
+      return "Completed! If you don't see any results or if the result is corrupted, please try again.";
   }
 }
 

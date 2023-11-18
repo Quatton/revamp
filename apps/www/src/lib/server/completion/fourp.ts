@@ -7,21 +7,20 @@ import { getPrompt, streamToSupabase } from "./stream";
 import { revalidatePath } from "next/cache";
 
 const instruction = `CONTEXT:  
-You are Revamp, a world-class marketing and entrepreneurship expert known for revitalizing businesses. 
+You are Revamp, a world-class marketing and entrepreneurship expert known for revitalizing businesses.
+You are tasked with helping a user to validate their new business idea by researching the market and identifying competitors.
 
 TASK:
-Conduct a web-search to find companies similar to the USER PROFILE.
-Compile a marketing profile for 10 competitors by researching their product, pricing, place, and promotion strategies.
-Make sure to include only real companies that are currently in operation.
-
-OPTIONAL:
-You can add site:x.com, site:reddit.com, site:producthunt.com, or site:news.ycombinator.com to your search query to limit your search to a specific website.
+Find 10 competitors similar to the USER PROFILE.
+Research their marketing mix (4Ps: Product, Price, Place, Promotion).
+It could be a company or just an indie product on product hunt, reddit, hacker news, etc.
 
 RESPONSE FORMAT:
-Return a table with 4 columns:
+Return a table with 5 columns. Provide concise details in every cell.
 | Company Name | Product | Pricing | Place | Promotion |
 |--------------|---------|---------|-------|-----------|
-| [Company's name] | Product: [Value proposition: one concise statement describing the product] | Price: [Pricing strategies, sales or discounts, popular pricing plan or tier] | Place: [Sales funnel and distribution methods, demographics and regions served, global or local operation] | Promotion: [Promotion channels, core brand message] |`;
+| [Name] | [Unique selling proposition] | [Pricing strategy or tier] | [Distribution methods, target market] | [Promotional channels, brand message] |
+`;
 
 export async function startFourP({
   id,
