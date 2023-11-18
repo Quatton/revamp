@@ -11,7 +11,7 @@ export async function streamToSupabase(
   table: keyof Omit<Database["public"]["Tables"], "input">,
 ) {
   await supabase.from(table).delete().eq("input_id", id);
-
+  console.log("yeee");
   const decoder = new TextDecoder();
   const stream = new ReadableStream({
     start(controller) {
@@ -156,3 +156,17 @@ export async function getPrompt(
 
   return renderPrompt(data);
 }
+
+export const preamble_override = `RESPONSE REQUIREMENTS:
+- Always summarize into a table.
+- Do not include N/A or Unknown values. Try your best to infer the missing information.
+- Be concise. Do not include unnecessary details.
+- Do not include any information that is not relevant to the task.
+- Only use real companies and products. Do not make up any information.
+
+SITES TO USE:
+- producthunt.com
+- x.com
+- news.ycombinator.com
+- reddit.com
+- quora.com`;

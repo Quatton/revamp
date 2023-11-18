@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { streamToSupabase } from "./stream";
+import { preamble_override, streamToSupabase } from "./stream";
 import { step_1_splitFourPs } from "@/lib/text";
 import { revalidatePath } from "next/cache";
 
@@ -39,7 +39,8 @@ export async function startSWOT({
     temperature: 0.6,
     // connectors: [{ id: "web-search" }],
     stream: true,
-    citation_quality: "fast",
+    preamble_override,
+    citation_quality: "accurate",
     documents: data.map((d) => ({
       title: d.name,
       snippet: `Name: ${d.name}\nProduct: ${d.product}\nPrice: ${d.price}\nPlace: ${d.place}\nPromotion: ${d.promotion}`,

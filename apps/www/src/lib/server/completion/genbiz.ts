@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { streamToSupabase } from "./stream";
+import { preamble_override, streamToSupabase } from "./stream";
 import { step_2_splitSWOT } from "@/lib/text";
 import { revalidatePath } from "next/cache";
 
@@ -39,7 +39,8 @@ export async function startGenBiz({
     temperature: 0.7,
     // connectors: [{ id: "web-search" }],
     stream: true,
-    citation_quality: "fast",
+    preamble_override,
+    citation_quality: "accurate",
     documents: data.map((d) => ({
       title: d.name,
       snippet: `Name: ${d.name}\n: Strengths: ${d.strengths}\nWeaknesses: ${d.weaknesses}\nOpportunities: ${d.opportunities}\nThreats: ${d.threats}`,

@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { streamToSupabase } from "./stream";
+import { preamble_override, streamToSupabase } from "./stream";
 import { revalidatePath } from "next/cache";
 
 const instruction = `CONTEXT:  
@@ -30,6 +30,7 @@ export async function startFourP({
     message: `${instruction}\n\n${prompt}`,
     model: "command",
     temperature: 0.7,
+    preamble_override,
     connectors: [{ id: "web-search" }],
     citation_quality: "accurate",
     stream: true,
