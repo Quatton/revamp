@@ -99,6 +99,7 @@ export async function streamToSupabase(
       case "text-generation":
         const { text } = json;
         if (typeof text != "string") break;
+
         completion += text;
         void supabase
           .rpc("stream-completion", {

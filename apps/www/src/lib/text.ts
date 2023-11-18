@@ -3,7 +3,10 @@ import { FourPData, InputData, NewBizData, SWOTData } from "./state";
 import { Database } from "@/types/supabase";
 
 export function grabTable(text: string) {
-  return text.match(/\|.+\|?/gs)?.at(0);
+  return text
+    .replace(/<\/?co:.*?>/g, "")
+    .match(/\|.+\|?/gs)
+    ?.at(0);
 }
 
 export function splitTable(text: string) {

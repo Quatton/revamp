@@ -31,7 +31,7 @@ export default async function ResultView({
       getSwot(supabase, id),
       getGenbiz(supabase, id),
     ] as const);
-  console.log("refreshed");
+
   if (!input) {
     return (
       <main className="grid h-screen place-content-center text-center">

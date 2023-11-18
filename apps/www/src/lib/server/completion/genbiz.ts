@@ -16,7 +16,7 @@ RESPONSE FORMAT:
 Summarize into a table with the following 4 columns and provide concise details for each business idea.
 | Business Idea | Category | Derived Advantages | Proposed Improvements |
 |---------------|----------|--------------------|-----------------------|
-| [Summarize the core concept and value proposition of the new business idea] | [Specify the category: no-code, code, platform, service, or content] | [List the advantages by referencing the strengths and opportunities from multiple competitors] | [Detail improvements by addressing weaknesses and threats noted in the competitors' SWOT analysis] |`;
+| [Summarize the core concept and value proposition of the new business idea] | [Specify the category: no-code, code, platform, service, or content] | [List the advantages by referencing the strengths and opportunities from multiple competitors] | [Detail improvements by adding a disruptive twist to the idea or addressing the weaknesses and threats of multiple competitors] |`;
 
 export async function startGenBiz({
   id,
