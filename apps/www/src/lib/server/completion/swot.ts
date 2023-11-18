@@ -10,7 +10,6 @@ You are given documents about the 4 P's of marketing (product, price, place, pro
 
 TASK:
 Analyze the provided 4 P's marketing documents to conduct a SWOT analysis for each competitor, focusing on their market positioning and potential for growth.
-Look for opportunities to leverage the strengths of each competitor while addressing their weaknesses.
 
 RESPONSE FORMAT:
 Return a table with 5 columns. Provide concise details in every cell.

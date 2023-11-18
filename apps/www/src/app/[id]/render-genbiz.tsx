@@ -46,26 +46,28 @@ export function GenBizTable({
       <ChatBox>
         <div className="space-y-2" ref={scrollDest}>
           {eventType && eventTypeToText(eventType)}
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Type of Product</th>
-                <th>Reference</th>
-                <th>Improvements</th>
-              </tr>
-            </thead>
-            <tbody>
-              {s3Data.map((data) => (
-                <tr key={data.product}>
-                  <td>{data.product}</td>
-                  <td>{data.type}</td>
-                  <td>{data.advantages}</td>
-                  <td>{data.improvements}</td>
+          {s3Data.length > 0 && (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Type of Product</th>
+                  <th>Reference</th>
+                  <th>Improvements</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {s3Data.map((data) => (
+                  <tr key={data.product}>
+                    <td>{data.product}</td>
+                    <td>{data.type}</td>
+                    <td>{data.advantages}</td>
+                    <td>{data.improvements}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </ChatBox>
     </>

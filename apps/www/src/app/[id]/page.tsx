@@ -1,7 +1,7 @@
 import { createServerClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import { ClassValue } from "clsx";
-import { Bot, Plus } from "lucide-react";
+import { Bot, ChevronLeft, Plus } from "lucide-react";
 import { cookies } from "next/headers";
 import { FourPTable } from "./render-fourp";
 import { SwotTable } from "./render-swot";
@@ -44,8 +44,17 @@ export default async function ResultView({
   }
 
   return (
-    <main className="grid h-screen w-full grid-rows-3 md:grid-cols-3 md:grid-rows-1">
-      <div className="flex flex-col justify-center gap-2 bg-base-100 p-8 md:gap-4">
+    <main className="grid min-h-screen w-full grid-rows-3 md:h-screen md:grid-cols-3 md:grid-rows-1">
+      <div className="flex w-full flex-col justify-center gap-2 bg-base-100 p-8 md:gap-4">
+        <div className="text-center">
+          <Link
+            href={`/`}
+            className="btn btn-neutral btn-link btn-sm md:btn-md"
+          >
+            <ChevronLeft className="h-6 w-6" />
+            New Idea
+          </Link>
+        </div>
         <div>
           <label className="label">
             <span className="label-text">Target Audience</span>
@@ -70,12 +79,6 @@ export default async function ResultView({
             {input.expertise}
           </p>
         </div>
-        <div className="text-center">
-          <Link href={`/`} className="btn btn-primary btn-sm md:btn-md">
-            <Plus className="mr-2 h-6 w-6" />
-            New Idea
-          </Link>
-        </div>
       </div>
       <OneListener
         id={id}
@@ -83,6 +86,9 @@ export default async function ResultView({
         initialFourP={fourp?.completion ?? ""}
         initialSwot={swot?.completion ?? ""}
         initialGenBiz={genbiz?.completion ?? ""}
+        fourPEventType={fourp?.event_type ?? null}
+        swotEventType={swot?.event_type ?? null}
+        genBizEventType={genbiz?.event_type ?? null}
       />
     </main>
   );

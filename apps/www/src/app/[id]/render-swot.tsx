@@ -47,28 +47,30 @@ export function SwotTable({
       <ChatBox>
         <div className="space-y-2" ref={scrollDest}>
           {eventType && eventTypeToText(eventType)}
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Strengths</th>
-                <th>Weaknesses</th>
-                <th>Opportunities</th>
-                <th>Threats</th>
-              </tr>
-            </thead>
-            <tbody>
-              {s2Data.map((row, i) => (
-                <tr key={i}>
-                  <td>{row.name}</td>
-                  <td>{row.strengths}</td>
-                  <td>{row.weaknesses}</td>
-                  <td>{row.opportunities}</td>
-                  <td>{row.threats}</td>
+          {s2Data.length > 0 && (
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Strengths</th>
+                  <th>Weaknesses</th>
+                  <th>Opportunities</th>
+                  <th>Threats</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {s2Data.map((row, i) => (
+                  <tr key={i}>
+                    <td>{row.name}</td>
+                    <td>{row.strengths}</td>
+                    <td>{row.weaknesses}</td>
+                    <td>{row.opportunities}</td>
+                    <td>{row.threats}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </ChatBox>
     </>

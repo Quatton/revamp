@@ -17,23 +17,35 @@ export function OneListener({
   initialFourP = "",
   initialSwot = "",
   initialGenBiz = "",
+  fourPEventType,
+  swotEventType,
+  genBizEventType,
 }: {
   id: string;
   input: Database["public"]["Tables"]["input"]["Row"];
   initialFourP: string;
   initialSwot: string;
   initialGenBiz: string;
+  fourPEventType: EventType | null;
+  swotEventType: EventType | null;
+  genBizEventType: EventType | null;
 }) {
   const supabase = createBrowseClient();
 
   const [s1Data, setS1Data] = useState<string>(initialFourP);
-  const [s1EventType, setS1EventType] = useState<EventType | null>(null);
+  const [s1EventType, setS1EventType] = useState<EventType | null>(
+    fourPEventType,
+  );
 
   const [s2Data, setS2Data] = useState<string>(initialSwot);
-  const [s2EventType, setS2EventType] = useState<EventType | null>(null);
+  const [s2EventType, setS2EventType] = useState<EventType | null>(
+    swotEventType,
+  );
 
   const [s3Data, setS3Data] = useState<string>(initialGenBiz);
-  const [s3EventType, setS3EventType] = useState<EventType | null>(null);
+  const [s3EventType, setS3EventType] = useState<EventType | null>(
+    genBizEventType,
+  );
 
   useEffect(() => {
     const channel = getSupabaseSubscriber(supabase, "fourp", id, (data) => {
@@ -90,14 +102,14 @@ export function OneListener({
   }, [id, s3Data, setS3Data, supabase]);
 
   return (
-    <div className="row-span-2 overflow-auto md:col-span-2 md:row-span-1">
+    <div className="row-span-2 overflow-y-auto md:col-span-2 md:row-span-1">
       <FourPTable
         id={id}
         input={input}
         current={s1Data}
         eventType={s1EventType}
       />
-      {(initialFourP || s1Data) && (
+      {(initialSwot || s1EventType === "stream-end") && (
         <SwotTable
           id={id}
           input={input}
@@ -106,7 +118,7 @@ export function OneListener({
           eventType={s2EventType}
         />
       )}
-      {(initialSwot || s2Data) && (
+      {(initialSwot || s2EventType === "stream-end") && (
         <GenBizTable
           id={id}
           input={input}

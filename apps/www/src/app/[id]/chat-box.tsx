@@ -11,19 +11,16 @@ export function ChatBox({
 }) {
   return (
     <div
-      className="grid max-w-full grid-cols-10 gap-2 p-4 odd:bg-base-200 even:bg-base-300"
+      className="grid w-full grid-cols-[auto,1fr] gap-4 overflow-x-hidden p-4 odd:bg-base-200 even:bg-base-300"
       style={{
         placeItems: "center start",
       }}
     >
-      <span className="p-2">
+      <span className="place-self-start p-2">
         <Bot className="h-6 w-6" />
       </span>
       <div
-        className={cn(
-          className,
-          "col-span-9 flex flex-col gap-2 overflow-x-auto",
-        )}
+        className={cn(className, "flex w-full flex-col gap-2 overflow-x-auto")}
       >
         {children}
       </div>
